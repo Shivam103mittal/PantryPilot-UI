@@ -1,7 +1,16 @@
-export default function App() {
+// src/App.jsx
+import React from "react";
+import RecipeMatcher from "./components/RecipeMatcher";
+
+function App() {
   return (
-    <div className="bg-blue-500 text-white p-6 rounded-lg">
-      Tailwind is working 🎉
+    <div className="min-h-screen bg-gray-50 p-6">
+      <h1 className="text-3xl font-bold text-center mb-6">PantryPilot</h1>
+      <div className="max-w-4xl mx-auto">
+        <RecipeMatcher />
+      </div>
     </div>
-  )
+  );
 }
+
+export default App;

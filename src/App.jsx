@@ -1,19 +1,37 @@
-// src/App.jsx
 import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import RecipeMatcher from "./components/RecipeMatcher";
-import logo from "./assets/logo.png"; // Make sure the logo is in src/assets/
+import Login from "./components/Login";
+import Register from "./components/Register"; // new import
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
-      {/* Logo only */}
-      <img src={logo} alt="PantryPilot Logo" className="w-48 mb-6" />
+    <Router>
+      <Routes>
+        {/* Login page */}
+        <Route path="/login" element={<Login />} />
 
-      {/* Recipe Matcher */}
-      <div className="max-w-4xl w-full">
-        <RecipeMatcher />
-      </div>
-    </div>
+        {/* Register page */}
+        <Route path="/register" element={<Register />} />
+
+        {/* Protected RecipeMatcher page */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              {/* Full-page container */}
+              <div className="min-h-screen w-full flex flex-col">
+                <RecipeMatcher />
+              </div>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Redirect unknown routes to login */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </Router>
   );
 }
 

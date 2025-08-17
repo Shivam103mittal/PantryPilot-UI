@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaTrash,
   FaPlus,
@@ -7,9 +7,14 @@ import {
   FaUtensils,
   FaClock,
   FaSignOutAlt,
-  FaTimes
+  FaTimes,
+  FaHeart,
+  FaRegHeart
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
+
+// File: src/components/RecipeMatcher.jsx
 
 const RecipeMatcher = () => {
   const [ingredientName, setIngredientName] = useState("");
@@ -17,10 +22,14 @@ const RecipeMatcher = () => {
   const [unit, setUnit] = useState("pcs");
   const [ingredients, setIngredients] = useState([]);
   const [recipes, setRecipes] = useState([]);
+  const [likedRecipes, setLikedRecipes] = useState(new Set()); // Store liked recipe IDs
+  const [likedRecipesCount, setLikedRecipesCount] = useState(0); // Track count for header
   const [token, setToken] = useState(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const quickIngredients = [
     "chicken",
@@ -36,11 +45,98 @@ const RecipeMatcher = () => {
   const userToken = localStorage.getItem("token");
   const username = localStorage.getItem("username");
 
+  // Load liked recipes when component mounts
+  useEffect(() => {
+    if (userToken) {
+      loadLikedRecipes();
+    }
+  }, [userToken]);
+
+  // Function to load liked recipes from backend
+  const loadLikedRecipes = async () => {
+    try {
+      const response = await fetch("/api/likes", {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+      
+      if (response.ok) {
+        const likedRecipesData = await response.json();
+        const likedIds = new Set(likedRecipesData.map(recipe => recipe.id));
+        setLikedRecipes(likedIds);
+        setLikedRecipesCount(likedRecipesData.length);
+      }
+    } catch (err) {
+      console.error("Failed to load liked recipes:", err);
+    }
+  };
+
+  // Function to like a recipe
+  const likeRecipe = async (recipeId) => {
+    try {
+      const response = await fetch(`/api/likes/${recipeId}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+
+      if (response.ok) {
+        setLikedRecipes(prev => new Set([...prev, recipeId]));
+        setLikedRecipesCount(prev => prev + 1);
+      } else {
+        console.error("Failed to like recipe");
+      }
+    } catch (err) {
+      console.error("Error liking recipe:", err);
+    }
+  };
+
+  // Function to unlike a recipe
+  const unlikeRecipe = async (recipeId) => {
+    try {
+      const response = await fetch(`/api/likes/${recipeId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+
+      if (response.ok) {
+        setLikedRecipes(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(recipeId);
+          return newSet;
+        });
+        setLikedRecipesCount(prev => Math.max(0, prev - 1));
+      } else {
+        console.error("Failed to unlike recipe");
+      }
+    } catch (err) {
+      console.error("Error unliking recipe:", err);
+    }
+  };
+
+  // Toggle like status
+  const toggleLike = (recipeId) => {
+    if (likedRecipes.has(recipeId)) {
+      unlikeRecipe(recipeId);
+    } else {
+      likeRecipe(recipeId);
+    }
+  };
+
+  // Navigate to liked recipes page
+  const goToLikedRecipes = () => {
+    navigate("/liked-recipes");
+  };
+
   // Logout function
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
-    window.location.href = "/login"; // redirect to login page
+    navigate("/login");
   };
 
   const addIngredient = () => {
@@ -187,18 +283,36 @@ const RecipeMatcher = () => {
               </div>
             </div>
 
-            {/* User Info and Logout */}
+            {/* User Info and Actions */}
             <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
               <div className="text-white/90 text-sm text-center sm:text-left">
                 Welcome, <span className="font-semibold">{username || 'User'}</span>
               </div>
-              <button
-                onClick={handleLogout}
-                className="bg-red-500/20 backdrop-blur-sm border border-red-500/30 text-red-100 px-4 py-2 rounded-xl hover:bg-red-500/30 transition-all duration-500 ease-in-out flex items-center gap-2 text-sm font-medium"
-              >
-                <FaSignOutAlt className="text-sm" />
-                Logout
-              </button>
+              <div className="flex space-x-2">
+                {/* Liked Recipes Button */}
+                <button
+                  onClick={goToLikedRecipes}
+                  className="bg-red-500/20 backdrop-blur-sm border border-red-500/30 text-red-100 px-4 py-2 rounded-xl hover:bg-red-500/30 transition-all duration-500 ease-in-out flex items-center gap-2 text-sm font-medium relative"
+                  title="View your favorite recipes"
+                >
+                  <FaHeart className="text-sm" />
+                  <span className="hidden sm:inline">Favorites</span>
+                  {likedRecipesCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold">
+                      {likedRecipesCount > 99 ? '99+' : likedRecipesCount}
+                    </span>
+                  )}
+                </button>
+                
+                {/* Logout Button */}
+                <button
+                  onClick={handleLogout}
+                  className="bg-gray-500/20 backdrop-blur-sm border border-gray-500/30 text-gray-100 px-4 py-2 rounded-xl hover:bg-gray-500/30 transition-all duration-500 ease-in-out flex items-center gap-2 text-sm font-medium"
+                >
+                  <FaSignOutAlt className="text-sm" />
+                  <span className="hidden sm:inline">Logout</span>
+                </button>
+              </div>
             </div>
 
           </div>
@@ -370,11 +484,24 @@ const RecipeMatcher = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {recipes.map((recipe, idx) => (
                     <div
-                      key={idx}
-                      className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 rounded-2xl hover:bg-white/15 transform hover:scale-105 transition-all duration-500 ease-in-out group animate-fadeIn fade-transition"
+                      key={recipe.id || idx}
+                      className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 rounded-2xl hover:bg-white/15 transform hover:scale-105 transition-all duration-500 ease-in-out group animate-fadeIn fade-transition relative"
                       style={{ animationDelay: `${idx * 0.1}s` }}
                     >
-                      <div className="flex items-center gap-2 mb-4">
+                      {/* Like/Unlike Button */}
+                      <button
+                        onClick={() => toggleLike(recipe.id)}
+                        className="absolute top-4 right-4 p-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-110"
+                        title={likedRecipes.has(recipe.id) ? "Unlike recipe" : "Like recipe"}
+                      >
+                        {likedRecipes.has(recipe.id) ? (
+                          <FaHeart className="text-red-400 text-lg" />
+                        ) : (
+                          <FaRegHeart className="text-white/70 hover:text-red-400 text-lg transition-colors duration-300" />
+                        )}
+                      </button>
+
+                      <div className="flex items-center gap-2 mb-4 pr-12">
                         <FaClock className="text-purple-400" />
                         <h4 className="font-bold text-lg text-white">
                           {recipe.title}

@@ -10,6 +10,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 
 import RecipeMatcher from "./components/RecipeMatcher";
+import LikedRecipes from "./components/LikedRecipes";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -67,8 +68,32 @@ function AnimatedRoutes() {
           }
         />
 
-        {/* Redirect unknown routes to login */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* Protected RecipeMatcher page (alternative route) */}
+        <Route
+          path="/recipe-matcher"
+          element={
+            <ProtectedRoute>
+              <PageWrapper>
+                <RecipeMatcher />
+              </PageWrapper>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Protected LikedRecipes page */}
+        <Route
+          path="/liked-recipes"
+          element={
+            <ProtectedRoute>
+              <PageWrapper>
+                <LikedRecipes />
+              </PageWrapper>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Redirect unknown routes to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AnimatePresence>
   );

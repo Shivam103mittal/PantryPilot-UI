@@ -1,29 +1,68 @@
+// src/App.jsx
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+
 import RecipeMatcher from "./components/RecipeMatcher";
 import Login from "./components/Login";
-import Register from "./components/Register"; // new import
+import Register from "./components/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-function App() {
+// Transition wrapper for pages
+const PageWrapper = ({ children }) => {
   return (
-    <Router>
-      <Routes>
+    <motion.div
+      className="min-h-screen w-full flex flex-col"
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -15 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+function AnimatedRoutes() {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
         {/* Login page */}
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/login"
+          element={
+            <PageWrapper>
+              <Login />
+            </PageWrapper>
+          }
+        />
 
         {/* Register page */}
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/register"
+          element={
+            <PageWrapper>
+              <Register />
+            </PageWrapper>
+          }
+        />
 
         {/* Protected RecipeMatcher page */}
         <Route
           path="/"
           element={
             <ProtectedRoute>
-              {/* Full-page container */}
-              <div className="min-h-screen w-full flex flex-col">
+              <PageWrapper>
                 <RecipeMatcher />
-              </div>
+              </PageWrapper>
             </ProtectedRoute>
           }
         />
@@ -31,6 +70,14 @@ function App() {
         {/* Redirect unknown routes to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
+    </AnimatePresence>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AnimatedRoutes />
     </Router>
   );
 }

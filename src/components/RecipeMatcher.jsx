@@ -11,7 +11,6 @@ import {
 } from "react-icons/fa";
 import logo from "../assets/logo.png";
 
-
 const RecipeMatcher = () => {
   const [ingredientName, setIngredientName] = useState("");
   const [quantity, setQuantity] = useState("");
@@ -195,7 +194,7 @@ const RecipeMatcher = () => {
               </div>
               <button
                 onClick={handleLogout}
-                className="bg-red-500/20 backdrop-blur-sm border border-red-500/30 text-red-100 px-4 py-2 rounded-xl hover:bg-red-500/30 transition-all duration-300 flex items-center gap-2 text-sm font-medium"
+                className="bg-red-500/20 backdrop-blur-sm border border-red-500/30 text-red-100 px-4 py-2 rounded-xl hover:bg-red-500/30 transition-all duration-500 ease-in-out flex items-center gap-2 text-sm font-medium"
               >
                 <FaSignOutAlt className="text-sm" />
                 Logout
@@ -205,7 +204,6 @@ const RecipeMatcher = () => {
           </div>
         </div>
       </div>
-
 
       {/* Main Content */}
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -222,9 +220,9 @@ const RecipeMatcher = () => {
             </div>
 
             {/* Ingredient Input Section */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-6 border border-white/20">
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-6 border border-white/20 fade-transition">
               {error && (
-                <div className="bg-red-500/20 backdrop-blur-sm border border-red-500/30 text-red-100 p-3 rounded-xl mb-4 text-center text-sm animate-shake">
+                <div className="bg-red-500/20 backdrop-blur-sm border border-red-500/30 text-red-100 p-3 rounded-xl mb-4 text-center text-sm animate-shake animate-fadeInDown">
                   {error}
                 </div>
               )}
@@ -237,7 +235,7 @@ const RecipeMatcher = () => {
                     value={ingredientName}
                     onChange={(e) => setIngredientName(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    className="w-full px-4 py-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-300"
+                    className="w-full px-4 py-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-500 ease-in-out"
                   />
                 </div>
                 <div className="flex gap-3">
@@ -248,12 +246,12 @@ const RecipeMatcher = () => {
                     value={quantity}
                     onChange={(e) => setQuantity(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    className="w-20 px-3 py-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-300 text-center"
+                    className="w-20 px-3 py-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-500 ease-in-out text-center"
                   />
                   <select
                     value={unit}
                     onChange={(e) => setUnit(e.target.value)}
-                    className="px-4 py-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-300"
+                    className="px-4 py-4 bg-white/10 backdrop-blur-sm border border-white/30 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-500 ease-in-out"
                   >
                     <option value="pcs" className="bg-gray-800">pcs</option>
                     <option value="g" className="bg-gray-800">g</option>
@@ -268,13 +266,13 @@ const RecipeMatcher = () => {
               <div className="flex flex-wrap gap-3 justify-center">
                 <button
                   onClick={addIngredient}
-                  className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-4 focus:ring-green-400/50 transition-all duration-300 transform hover:scale-105 font-semibold"
+                  className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-4 focus:ring-green-400/50 transition-all duration-500 ease-in-out transform hover:scale-105 font-semibold"
                 >
                   <FaPlus /> Add Ingredient
                 </button>
                 <button
                   onClick={clearIngredients}
-                  className="bg-gradient-to-r from-red-500 to-pink-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 hover:from-red-600 hover:to-pink-700 focus:outline-none focus:ring-4 focus:ring-red-400/50 transition-all duration-300 transform hover:scale-105 font-semibold"
+                  className="bg-gradient-to-r from-red-500 to-pink-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 hover:from-red-600 hover:to-pink-700 focus:outline-none focus:ring-4 focus:ring-red-400/50 transition-all duration-500 ease-in-out transform hover:scale-105 font-semibold"
                 >
                   <FaTrash /> Clear All
                 </button>
@@ -291,7 +289,7 @@ const RecipeMatcher = () => {
                   <button
                     key={ingredient}
                     onClick={() => quickAdd(ingredient)}
-                    className="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-4 py-2 rounded-full hover:bg-white/20 transition-all duration-300 transform hover:scale-105 font-medium capitalize"
+                    className="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-4 py-2 rounded-full hover:bg-white/20 transition-all duration-500 ease-in-out transform hover:scale-105 font-medium capitalize"
                   >
                     {ingredient}
                   </button>
@@ -300,14 +298,14 @@ const RecipeMatcher = () => {
             </div>
 
             {/* Ingredients Display */}
-            <div className="mb-6">
-              <div className="bg-white/5 backdrop-blur-sm border-2 border-dashed border-white/20 rounded-2xl p-6 min-h-24">
-                <div className="text-center text-white/80 font-medium mb-4">
+            <div className="mb-6 fade-transition">
+              <div className="bg-white/5 backdrop-blur-sm border-2 border-dashed border-white/20 rounded-2xl p-6 min-h-24 fade-transition">
+                <div className="text-center text-white/80 font-medium mb-4 fade-transition">
                   {ingredients.length} ingredient{ingredients.length !== 1 ? "s" : ""} added
                 </div>
 
                 {ingredients.length === 0 ? (
-                  <div className="text-center text-white/50 italic py-4">
+                  <div className="text-center text-white/50 italic py-4 fade-transition">
                     Start adding ingredients to find matching recipes
                   </div>
                 ) : (
@@ -315,14 +313,14 @@ const RecipeMatcher = () => {
                     {ingredients.map((ing) => (
                       <div
                         key={ing.id}
-                        className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-lg transform transition-all duration-300 hover:scale-105 font-medium"
+                        className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-lg transition-all duration-500 ease-in-out hover:scale-105 font-medium animate-fadeIn"
                       >
                         <span>
                           {ing.quantity} {ing.unit} {ing.ingredientName}
                         </span>
                         <button
                           onClick={() => removeIngredient(ing.id)}
-                          className="text-white hover:text-red-200 transition-colors duration-200 font-bold"
+                          className="text-white hover:text-red-200 transition-colors duration-300 font-bold"
                         >
                           <FaTimes />
                         </button>
@@ -337,13 +335,13 @@ const RecipeMatcher = () => {
             <button
               onClick={findRecipes}
               disabled={loading}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-4 rounded-2xl hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-4 focus:ring-purple-400/50 transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group mb-6"
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-4 rounded-2xl hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-4 focus:ring-purple-400/50 transition-all duration-500 ease-in-out transform hover:scale-[1.02] flex items-center justify-center gap-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group mb-6 fade-transition"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out"></div>
               {loading ? (
-                <>
+                <div className="animate-fadeInDown">
                   <FaSyncAlt className="animate-spin" /> Finding Recipes...
-                </>
+                </div>
               ) : (
                 <>
                   <FaSearch /> Find Recipes
@@ -353,15 +351,15 @@ const RecipeMatcher = () => {
 
             {/* Message */}
             {message && (
-              <div className="bg-red-500/20 backdrop-blur-sm border border-red-500/30 text-red-100 p-3 rounded-xl mb-6 text-center font-medium animate-shake">
+              <div className="bg-red-500/20 backdrop-blur-sm border border-red-500/30 text-red-100 p-3 rounded-xl mb-6 text-center font-medium animate-shake animate-fadeInDown">
                 {message}
               </div>
             )}
 
             {/* Recipes Grid */}
             {recipes.length > 0 && (
-              <div>
-                <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="animate-fadeInDown">
+                <div className="flex items-center justify-center gap-3 mb-6 animate-fadeIn">
                   <FaUtensils className="text-purple-400 text-2xl" />
                   <h3 className="text-2xl font-bold text-white">
                     Matched Recipes
@@ -373,7 +371,8 @@ const RecipeMatcher = () => {
                   {recipes.map((recipe, idx) => (
                     <div
                       key={idx}
-                      className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 rounded-2xl hover:bg-white/15 transform hover:scale-105 transition-all duration-300 group"
+                      className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 rounded-2xl hover:bg-white/15 transform hover:scale-105 transition-all duration-500 ease-in-out group animate-fadeIn fade-transition"
+                      style={{ animationDelay: `${idx * 0.1}s` }}
                     >
                       <div className="flex items-center gap-2 mb-4">
                         <FaClock className="text-purple-400" />
@@ -391,7 +390,8 @@ const RecipeMatcher = () => {
                             {recipe.matchedIngredients.map((mi, miIdx) => (
                               <span
                                 key={miIdx}
-                                className="bg-purple-500/20 backdrop-blur-sm border border-purple-400/30 text-purple-200 px-3 py-1 rounded-full text-xs font-medium"
+                                className="bg-purple-500/20 backdrop-blur-sm border border-purple-400/30 text-purple-200 px-3 py-1 rounded-full text-xs font-medium animate-fadeIn"
+                                style={{ animationDelay: `${(idx * 0.1) + (miIdx * 0.05)}s` }}
                               >
                                 {mi.quantity} {mi.unit} {mi.ingredientName}
                               </span>
@@ -404,16 +404,16 @@ const RecipeMatcher = () => {
                 </div>
 
                 {token && (
-                  <div className="text-center mt-8">
+                  <div className="text-center mt-8 animate-fadeInDown">
                     <button
                       onClick={loadMore}
                       disabled={loading}
-                      className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-8 py-3 rounded-xl hover:from-indigo-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
+                      className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-8 py-3 rounded-xl hover:from-indigo-600 hover:to-purple-700 transition-all duration-500 ease-in-out transform hover:scale-105 font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto fade-transition"
                     >
                       {loading ? (
-                        <>
+                        <div className="animate-fadeInDown">
                           <FaSyncAlt className="animate-spin" /> Loading...
-                        </>
+                        </div>
                       ) : (
                         <>
                           <FaPlus /> Load More Recipes
@@ -427,51 +427,6 @@ const RecipeMatcher = () => {
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes blob {
-          0% {
-            transform: translate(0px, 0px) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-          100% {
-            transform: translate(0px, 0px) scale(1);
-          }
-        }
-        
-        @keyframes shake {
-          0%, 100% {
-            transform: translateX(0);
-          }
-          25% {
-            transform: translateX(-5px);
-          }
-          75% {
-            transform: translateX(5px);
-          }
-        }
-        
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-        
-        .animate-shake {
-          animation: shake 0.5s ease-in-out;
-        }
-      `}</style>
     </div>
   );
 };

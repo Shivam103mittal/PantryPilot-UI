@@ -1,17 +1,67 @@
 /* Existing fadeIn animation */
 @keyframes fadeIn {
-  0% { 
-    opacity: 0; 
-    transform: translateY(-10px); 
+  from {
+    opacity: 0;
+    transform: scale(0.96);
   }
-  100% { 
-    opacity: 1; 
-    transform: translateY(0); 
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Fade out animation for removing elements */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+/* Fade in from top for messages and loading states */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 .animate-fadeIn {
-  animation: fadeIn 0.4s ease-in-out;
+  animation: fadeIn 0.4s ease-out;
+  will-change: opacity, transform;
+}
+
+.animate-fadeOut {
+  animation: fadeOut 0.3s ease-in;
+  will-change: opacity, transform;
+}
+
+.animate-fadeInDown {
+  animation: fadeInDown 0.5s ease-out;
+  will-change: opacity, transform;
+}
+
+/* Smooth transitions for dynamic content */
+.fade-transition {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.fade-enter {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transform: scale(1);
 }
 
 /* New enhanced animations */
@@ -68,11 +118,17 @@
   0%, 100% {
     transform: translateX(0);
   }
-  25% {
-    transform: translateX(-5px);
+  20% {
+    transform: translateX(-3px);
   }
-  75% {
-    transform: translateX(5px);
+  40% {
+    transform: translateX(3px);
+  }
+  60% {
+    transform: translateX(-2px);
+  }
+  80% {
+    transform: translateX(2px);
   }
 }
 
@@ -94,6 +150,22 @@
   }
 }
 
+/* Login/Register/RecipeMatcher component specific animations - moved from inline styles */
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
 /* Animation utility classes */
 .animate-slideInFromLeft {
   animation: slideInFromLeft 0.5s ease-out;
@@ -112,7 +184,8 @@
 }
 
 .animate-shake {
-  animation: shake 0.5s ease-in-out;
+  animation: shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  will-change: transform;
 }
 
 .animate-glow {
@@ -121,6 +194,20 @@
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+
+/* Login/Register/RecipeMatcher component specific animation classes */
+.animate-blob {
+  animation: blob 10s infinite ease-in-out;
+  will-change: transform;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
 }
 
 /* Hover animations */
@@ -198,4 +285,32 @@
 
 .hover-scale-sm:hover {
   transform: scale(1.02);
+}
+
+/* Accessibility: Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-blob,
+  .animate-blob-slow,
+  .animate-shake,
+  .animate-shake-gentle,
+  .animate-fadeIn,
+  .animate-fadeIn-scale,
+  .animate-pulse,
+  .animate-bounceIn,
+  .animate-slideInFromLeft,
+  .animate-slideInFromRight,
+  .animate-glow,
+  .animate-float,
+  .animate-spin,
+  .animate-gradient {
+    animation: none !important;
+  }
+  
+  .transition-all,
+  .hover-lift,
+  .hover-glow,
+  .hover-scale,
+  .hover-scale-sm {
+    transition: none !important;
+  }
 }

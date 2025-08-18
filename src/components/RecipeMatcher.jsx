@@ -13,8 +13,7 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
-
-// File: src/components/RecipeMatcher.jsx
+import "./animations.css"
 
 const RecipeMatcher = () => {
   const [ingredientName, setIngredientName] = useState("");

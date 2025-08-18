@@ -104,9 +104,14 @@ const LikedRecipes = () => {
     setFilteredRecipes(filtered);
   };
 
-  const handleUnlikeRecipe = (recipe) => {
+  const handleUnlikeRecipe = (recipe, event) => {
+    event.stopPropagation(); // Prevent navigation when clicking unlike button
     setRecipeToDelete(recipe);
     setShowConfirmDialog(true);
+  };
+
+  const handleRecipeClick = (recipeId) => {
+    navigate(`/recipes/${recipeId}`);
   };
 
   const confirmUnlike = async () => {
@@ -291,19 +296,20 @@ const LikedRecipes = () => {
                 {filteredRecipes.map((recipe, idx) => (
                   <div
                     key={recipe.id}
-                    className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 rounded-2xl hover:bg-white/15 transform hover:scale-105 transition-all duration-500 ease-in-out group relative"
+                    className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 rounded-2xl hover:bg-white/15 transform hover:scale-105 transition-all duration-500 ease-in-out group relative cursor-pointer"
                     style={{ animationDelay: `${idx * 0.1}s` }}
+                    onClick={() => handleRecipeClick(recipe.id)}
                   >
                     {/* Unlike Button */}
                     <button
-                      onClick={() => handleUnlikeRecipe(recipe)}
-                      className="absolute top-4 right-4 p-2 rounded-full bg-red-500/20 backdrop-blur-sm border border-red-500/30 hover:bg-red-500/40 transition-all duration-300 transform hover:scale-110 group"
+                      onClick={(e) => handleUnlikeRecipe(recipe, e)}
+                      className="absolute top-4 right-4 p-2 rounded-full bg-red-500/20 backdrop-blur-sm border border-red-500/30 hover:bg-red-500/40 transition-all duration-300 transform hover:scale-110 group z-10"
                       title="Remove from favorites"
                     >
                       <FaTrash className="text-red-400 text-sm group-hover:text-red-300 transition-colors duration-300" />
                     </button>
 
-                                          {/* Recipe Content */}
+                    {/* Recipe Content */}
                     <div className="pr-12">
                       <div className="flex items-center gap-2 mb-4">
                         <FaClock className="text-purple-400" />
@@ -347,6 +353,11 @@ const LikedRecipes = () => {
                           </div>
                         </div>
                       )}
+
+                      {/* Click hint */}
+                      <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <p className="text-purple-300 text-xs font-medium">Click to view details →</p>
+                      </div>
                     </div>
                   </div>
                 ))}

@@ -14,6 +14,7 @@ import LikedRecipes from "./components/LikedRecipes";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
+import RecipeDetails from "./components/RecipeDetails"; 
 
 // Transition wrapper for pages
 const PageWrapper = ({ children }) => {
@@ -87,6 +88,18 @@ function AnimatedRoutes() {
             <ProtectedRoute>
               <PageWrapper>
                 <LikedRecipes />
+              </PageWrapper>
+            </ProtectedRoute>
+          }
+        />
+
+        
+        <Route
+          path="/recipes/:id"
+          element={
+            <ProtectedRoute>
+              <PageWrapper>
+                <RecipeDetails />
               </PageWrapper>
             </ProtectedRoute>
           }

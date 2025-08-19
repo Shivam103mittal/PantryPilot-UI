@@ -187,7 +187,7 @@ const LikedRecipes = () => {
                 className="h-14 w-14 object-contain"
               />
               <div>
-                <h1 className="text-2xl font-bold text-white">PantryPilot</h1>
+                <h1 className="text-2xl font-bold text-white">Pantry Pilot</h1>
                 <p className="text-white/70 text-sm">Liked Recipes</p>
               </div>
             </div>

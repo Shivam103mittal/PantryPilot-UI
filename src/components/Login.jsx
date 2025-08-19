@@ -74,7 +74,7 @@ const Login = () => {
                             Welcome Back
                         </h1>
                         <p className="text-white/70 text-sm">
-                            Sign in to your PantryPilot account
+                            Sign in to your Pantry Pilot account
                         </p>
                     </div>
 

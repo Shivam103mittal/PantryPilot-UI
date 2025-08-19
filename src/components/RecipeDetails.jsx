@@ -7,6 +7,7 @@ import {
   FaArrowLeft,
   FaSignOutAlt,
   FaHeart,
+  FaCheck,
 } from "react-icons/fa";
 import logo from "../assets/logo.png";
 import "./animations.css"
@@ -16,6 +17,7 @@ const RecipeDetails = () => {
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [checkedIngredients, setCheckedIngredients] = useState(new Set());
   
   const username = localStorage.getItem("username");
   const userToken = localStorage.getItem("token");
@@ -54,6 +56,17 @@ const RecipeDetails = () => {
 
   const goBack = () => {
     navigate("/liked-recipes");
+  };
+
+  // NEW: Toggle ingredient checked state
+  const toggleIngredient = (ingredientId) => {
+    const newChecked = new Set(checkedIngredients);
+    if (newChecked.has(ingredientId)) {
+      newChecked.delete(ingredientId);
+    } else {
+      newChecked.add(ingredientId);
+    }
+    setCheckedIngredients(newChecked);
   };
 
   if (loading) {
@@ -159,7 +172,7 @@ const RecipeDetails = () => {
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white/10 backdrop-blur-lg rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
           <div className="p-6 sm:p-8">
-            {/* Title Section */}
+            {/* Enhanced Title Section */}
             <div className="text-center mb-8">
               <div className="flex items-center justify-center gap-3 mb-4">
                 <FaClock className="text-purple-400 text-3xl" />
@@ -168,6 +181,8 @@ const RecipeDetails = () => {
                 </h2>
                 <FaHeart className="text-red-400 text-3xl" />
               </div>
+              
+              {/* Recipe stats */}
               <div className="flex justify-center gap-6 text-white/70">
                 <div className="flex items-center gap-2">
                   <FaUtensils className="text-green-400" />
@@ -177,30 +192,55 @@ const RecipeDetails = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <FaClock className="text-blue-400" />
-                  <span className="text-sm font-medium">30 mins</span>
+                  <span className="text-sm font-medium">{recipe.prepTime} mins</span>
                 </div>
               </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Ingredients Section */}
+              {/* Enhanced Ingredients Section */}
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-6">
-                <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                  <FaUtensils className="text-green-400" />
-                  Ingredients
-                </h3>
+                {/* NEW: Progress indicator for checked ingredients */}
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                    <FaUtensils className="text-green-400" />
+                    Ingredients
+                  </h3>
+                  <div className="text-sm text-white/60">
+                    {checkedIngredients.size}/{recipe.ingredients?.length || 0} checked
+                  </div>
+                </div>
                 
                 <div className="space-y-3">
                   {recipe.ingredients?.map((ing, idx) => (
                     <div
                       key={ing.id}
-                      className="bg-green-500/20 backdrop-blur-sm border border-green-400/30 p-4 rounded-xl hover:bg-green-500/30 transition-all duration-300 group"
+                      className={`backdrop-blur-sm border p-4 rounded-xl transition-all duration-300 cursor-pointer hover:scale-105 ${
+                        checkedIngredients.has(ing.id)
+                          ? 'bg-green-500/40 border-green-400/60'
+                          : 'bg-green-500/20 border-green-400/30 hover:bg-green-500/30'
+                      }`}
                       style={{ animationDelay: `${idx * 0.1}s` }}
+                      onClick={() => toggleIngredient(ing.id)}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-green-100 font-medium">
-                          {ing.ingredientName}
-                        </span>
+                        <div className="flex items-center gap-3">
+                          {/* NEW: Checkbox indicator */}
+                          <div className={`w-5 h-5 rounded-full border-2 border-green-400 flex items-center justify-center transition-all duration-300 ${
+                            checkedIngredients.has(ing.id) ? 'bg-green-400' : ''
+                          }`}>
+                            {checkedIngredients.has(ing.id) && (
+                              <FaCheck className="text-white text-xs" />
+                            )}
+                          </div>
+                          <span className={`font-medium transition-all duration-300 ${
+                            checkedIngredients.has(ing.id)
+                              ? 'text-green-200 line-through'
+                              : 'text-green-100'
+                          }`}>
+                            {ing.ingredientName}
+                          </span>
+                        </div>
                         <span className="text-green-200 text-sm font-medium bg-green-500/30 px-3 py-1 rounded-full">
                           {ing.quantity} {ing.unit}
                         </span>
@@ -210,7 +250,7 @@ const RecipeDetails = () => {
                 </div>
               </div>
 
-              {/* Instructions Section */}
+              {/* Instructions Section - unchanged for now */}
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-6">
                 <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
                   <FaClock className="text-purple-400" />
@@ -240,8 +280,6 @@ const RecipeDetails = () => {
           </div>
         </div>
       </div>
-
-      
     </div>
   );
 };

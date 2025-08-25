@@ -8,6 +8,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import { UIStateProvider } from "./context/UIStateContext";
 
 import RecipeMatcher from "./components/RecipeMatcher";
 import LikedRecipes from "./components/LikedRecipes";
@@ -114,9 +115,11 @@ function AnimatedRoutes() {
 
 function App() {
   return (
+    <UIStateProvider>
     <Router>
       <AnimatedRoutes />
     </Router>
+    </UIStateProvider>
   );
 }
 

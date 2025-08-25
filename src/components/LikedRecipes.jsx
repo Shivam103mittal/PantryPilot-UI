@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useUIState } from "../context/UIStateContext";
 import {
   FaHeart,
   FaTrash,
@@ -16,18 +17,36 @@ import logo from "../assets/logo.png";
 // File: src/components/LikedRecipes.jsx
 
 const LikedRecipes = () => {
+  const { likedState, setLikedState } = useUIState();
+
   const [likedRecipes, setLikedRecipes] = useState([]);
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState("title"); // title, ingredients
+  const [searchTerm, setSearchTerm] = useState(likedState.search || "");
+  const [sortBy, setSortBy] = useState(likedState.filter || "title");
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [recipeToDelete, setRecipeToDelete] = useState(null);
 
   const userToken = localStorage.getItem("token");
   const username = localStorage.getItem("username");
   const navigate = useNavigate();
+
+  // Restore scroll
+  useEffect(() => {
+    window.scrollTo(0, likedState.scrollY || 0);
+  }, []);
+
+  // Save state before unmount
+  useEffect(() => {
+  return () => {
+    setLikedState({
+      scrollY: window.scrollY,
+      search: searchTerm,
+      filter: sortBy, // treat sortBy as "filter" since that's what you're using
+    });
+  };
+}, [searchTerm, sortBy, setLikedState]);
 
   useEffect(() => {
     if (userToken) {
@@ -96,12 +115,32 @@ const LikedRecipes = () => {
           const aIngredientCount = a.ingredients ? a.ingredients.length : 0;
           const bIngredientCount = b.ingredients ? b.ingredients.length : 0;
           return bIngredientCount - aIngredientCount;
+        case "prepTime":
+          const aPrepTime = a.prepTime || 0;
+          const bPrepTime = b.prepTime || 0;
+          return aPrepTime - bPrepTime;
         default:
           return 0;
       }
     });
 
     setFilteredRecipes(filtered);
+  };
+
+  const formatPrepTime = (minutes) => {
+    if (!minutes || minutes === 0) return "N/A";
+    
+    if (minutes < 60) {
+      return `${minutes} min`;
+    } else {
+      const hours = Math.floor(minutes / 60);
+      const remainingMinutes = minutes % 60;
+      if (remainingMinutes === 0) {
+        return `${hours} hr${hours > 1 ? 's' : ''}`;
+      } else {
+        return `${hours} hr${hours > 1 ? 's' : ''} ${remainingMinutes} min`;
+      }
+    }
   };
 
   const handleUnlikeRecipe = (recipe, event) => {
@@ -259,6 +298,7 @@ const LikedRecipes = () => {
                     >
                       <option value="title" className="bg-gray-800">Sort by Name</option>
                       <option value="ingredients" className="bg-gray-800">Sort by Ingredients</option>
+                      <option value="prepTime" className="bg-gray-800">Sort by Prep Time</option>
                     </select>
                   </div>
                 </div>
@@ -311,11 +351,19 @@ const LikedRecipes = () => {
 
                     {/* Recipe Content */}
                     <div className="pr-12">
-                      <div className="flex items-center gap-2 mb-4">
+                      <div className="flex items-center gap-2 mb-3">
                         <FaClock className="text-purple-400" />
                         <h4 className="font-bold text-lg text-white">
                           {recipe.title}
                         </h4>
+                      </div>
+
+                      {/* Prep Time */}
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 text-blue-200 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
+                          <FaClock className="text-xs" />
+                          {formatPrepTime(recipe.prepTime)}
+                        </div>
                       </div>
 
                       {/* Recipe Instructions Preview */}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useUIState } from "../context/UIStateContext";
 import {
   FaTrash,
   FaPlus,
@@ -17,18 +18,20 @@ import logo from "../assets/logo.png";
 import "./animations.css"
 
 const RecipeMatcher = () => {
+  const { matcherState, setMatcherState } = useUIState();
+
   const [ingredientName, setIngredientName] = useState("");
   const [quantity, setQuantity] = useState("");
   const [unit, setUnit] = useState("pcs");
-  const [ingredients, setIngredients] = useState([]);
-  const [recipes, setRecipes] = useState([]);
+  const [ingredients, setIngredients] = useState(matcherState.ingredients || []);
+  const [recipes, setRecipes] = useState(matcherState.recipes || []);
   const [likedRecipes, setLikedRecipes] = useState(new Set()); // Store liked recipe IDs
   const [likedRecipesCount, setLikedRecipesCount] = useState(0); // Track count for header
   const [token, setToken] = useState(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [prepTimeRange, setPrepTimeRange] = useState([0, 120]); // [min, max] in minutes
+  const [prepTimeRange, setPrepTimeRange] = useState(matcherState.prepTimeRange || [0, 120]);
 
 
   const formatTime = (minutes) => {
@@ -52,6 +55,24 @@ const getTimeCategory = (min, max) => {
 };
 
   const navigate = useNavigate();
+
+  // Restore scroll
+useEffect(() => {
+  window.scrollTo(0, matcherState.scrollY || 0);
+}, []);
+
+// Save state on unmount
+useEffect(() => {
+  return () => {
+    setMatcherState({
+      scrollY: window.scrollY,
+      ingredients,
+      recipes,
+      prepTimeRange,
+    });
+  };
+}, [ingredients, recipes, prepTimeRange, setMatcherState]);
+
 
   const quickIngredients = [
     "chicken",
@@ -222,8 +243,8 @@ const getTimeCategory = (min, max) => {
   const clearIngredients = () => setIngredients([]);
 
   const findRecipes = async () => {
-  if (!ingredients.length) {
-    setMessage("Add at least one ingredient");
+  if (ingredients.length<2) {
+    setMessage("Add at least two ingredients");
     return;
   }
   setLoading(true);
@@ -271,11 +292,23 @@ const getTimeCategory = (min, max) => {
     });
     if (!response.ok) throw new Error("Error fetching more recipes");
     const data = await response.json();
-    // Filter by prep time on frontend just in case
+
+    // Filter by prep time
     const filteredRecipes = (data.recipes || []).filter(
       (r) => r.prepTime >= prepTimeRange[0] && r.prepTime <= prepTimeRange[1]
     );
+
+    if (filteredRecipes.length === 0) {
+      setMessage("Can’t seem to find more for given ingredients");
+      return;
+    }
+
     setRecipes((prev) => [...prev, ...filteredRecipes]);
+
+    // Show AI limit message if present
+    if (data.aiLimitReached) {
+      setMessage("AI recipe generation limit reached for this session");
+    }
   } catch (err) {
     console.error(err);
     setMessage("Failed to load more recipes");
@@ -283,6 +316,7 @@ const getTimeCategory = (min, max) => {
     setLoading(false);
   }
 };
+
 
 
   const handleKeyPress = (e) => {
@@ -644,13 +678,18 @@ const getTimeCategory = (min, max) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {recipes.map((recipe, idx) => (
                     <div
-                      key={recipe.id || idx}
-                      className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 rounded-2xl hover:bg-white/15 transform hover:scale-105 transition-all duration-500 ease-in-out group animate-fadeIn fade-transition relative"
-                      style={{ animationDelay: `${idx * 0.1}s` }}
-                    >
-                      {/* Like/Unlike Button */}
-                      <button
-                        onClick={() => toggleLike(recipe.id)}
+  key={recipe.id || idx}
+  className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 rounded-2xl hover:bg-white/15 transform hover:scale-105 transition-all duration-500 ease-in-out group animate-fadeIn fade-transition relative cursor-pointer"
+  style={{ animationDelay: `${idx * 0.1}s` }}
+  onClick={() => navigate(`/recipes/${recipe.id}`)} // 👈 navigate on card click
+>
+  {/* Like/Unlike Button */}
+  <button
+    onClick={(e) => {
+      e.stopPropagation(); // 👈 prevent navigation when liking
+      toggleLike(recipe.id);
+    }}
+
                         className="absolute top-4 right-4 p-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-110"
                         title={likedRecipes.has(recipe.id) ? "Unlike recipe" : "Like recipe"}
                       >

@@ -32,6 +32,8 @@ const RecipeMatcher = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [prepTimeRange, setPrepTimeRange] = useState(matcherState.prepTimeRange || [0, 120]);
+  const [noMoreRecipes, setNoMoreRecipes] = useState(false);
+
 
 
   const formatTime = (minutes) => {
@@ -300,15 +302,13 @@ useEffect(() => {
 
     if (filteredRecipes.length === 0) {
       setMessage("Can’t seem to find more for given ingredients");
+      setNoMoreRecipes(true);
       return;
     }
 
     setRecipes((prev) => [...prev, ...filteredRecipes]);
 
     // Show AI limit message if present
-    if (data.aiLimitReached) {
-      setMessage("AI recipe generation limit reached for this session");
-    }
   } catch (err) {
     console.error(err);
     setMessage("Failed to load more recipes");
@@ -733,7 +733,7 @@ useEffect(() => {
                   <div className="text-center mt-8 animate-fadeInDown">
                     <button
                       onClick={loadMore}
-                      disabled={loading}
+                      disabled={loading || noMoreRecipes}
                       className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-8 py-3 rounded-xl hover:from-indigo-600 hover:to-purple-700 transition-all duration-500 ease-in-out transform hover:scale-105 font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto fade-transition"
                     >
                       {loading ? (

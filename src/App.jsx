@@ -1,4 +1,3 @@
-// src/App.jsx
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -10,6 +9,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { UIStateProvider } from "./context/UIStateContext";
 
+import Homepage from "./components/HomePage"; 
 import RecipeMatcher from "./components/RecipeMatcher";
 import LikedRecipes from "./components/LikedRecipes";
 import Login from "./components/Login";
@@ -17,7 +17,6 @@ import Register from "./components/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RecipeDetails from "./components/RecipeDetails"; 
 
-// Transition wrapper for pages
 const PageWrapper = ({ children }) => {
   return (
     <motion.div
@@ -38,6 +37,16 @@ function AnimatedRoutes() {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
+        
+        <Route
+          path="/"
+          element={
+            <PageWrapper>
+              <Homepage />
+            </PageWrapper>
+          }
+        />
+
         {/* Login page */}
         <Route
           path="/login"
@@ -59,18 +68,6 @@ function AnimatedRoutes() {
         />
 
         {/* Protected RecipeMatcher page */}
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <PageWrapper>
-                <RecipeMatcher />
-              </PageWrapper>
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Protected RecipeMatcher page (alternative route) */}
         <Route
           path="/recipe-matcher"
           element={
@@ -94,7 +91,6 @@ function AnimatedRoutes() {
           }
         />
 
-        
         <Route
           path="/recipes/:id"
           element={
@@ -106,7 +102,7 @@ function AnimatedRoutes() {
           }
         />
 
-        {/* Redirect unknown routes to home */}
+        {/* Redirect unknown routes to Homepage */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AnimatePresence>
@@ -116,9 +112,9 @@ function AnimatedRoutes() {
 function App() {
   return (
     <UIStateProvider>
-    <Router>
-      <AnimatedRoutes />
-    </Router>
+      <Router>
+        <AnimatedRoutes />
+      </Router>
     </UIStateProvider>
   );
 }

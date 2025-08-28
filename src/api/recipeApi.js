@@ -1,12 +1,10 @@
-const RECIPE_API_BASE = "http://localhost:8080/api/matching-recipes";
-
 /**
  * Fetch matched recipes from backend.
  * @param {Array} pantryIngredients - Array of objects { ingredientName, quantity, unit }
  * @returns {Promise<{token: string, recipes: Array}>}
  */
 export async function fetchMatchedRecipes(pantryIngredients) {
-  const res = await fetch(RECIPE_API_BASE, {
+  const res = await fetch("${process.env.API_BASE}/api/matching-recipes", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(pantryIngredients),
@@ -23,7 +21,7 @@ export async function fetchMatchedRecipes(pantryIngredients) {
  * @returns {Promise<{token: string, recipes: Array}>}
  */
 export async function fetchNextRecipes(token) {
-  const res = await fetch(`${RECIPE_API_BASE}/${token}`);
+  const res = await fetch(`"${process.env.API_BASE}/api/matching-recipes"/${token}`);
   if (!res.ok) throw new Error("Failed to fetch next batch of recipes");
   return res.json();
 }

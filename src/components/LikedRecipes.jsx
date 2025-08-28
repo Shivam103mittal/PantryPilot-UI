@@ -187,7 +187,7 @@ const LikedRecipes = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
-    navigate("/login");
+    navigate("/");
   };
 
   const goBackToMatcher = () => {

@@ -181,7 +181,7 @@ useEffect(() => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
-    navigate("/login");
+    navigate("/");
   };
 
   const addIngredient = () => {
@@ -245,8 +245,8 @@ useEffect(() => {
   const clearIngredients = () => setIngredients([]);
 
   const findRecipes = async () => {
-  if (ingredients.length<2) {
-    setMessage("Add at least two ingredients");
+  if (ingredients.length<3) {
+    setMessage("Add at least three ingredients");
     return;
   }
   setLoading(true);

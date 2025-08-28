@@ -22,7 +22,7 @@ const RecipeDetails = () => {
   const [checkedIngredients, setCheckedIngredients] = useState(new Set());
 
   // NEW: Add these state variables for enhanced features
-  const [imageView, setImageView] = useState('list'); // 'grid', 'list', 'minimal'
+  const [imageView, setImageView] = useState('grid'); // 'grid', 'list', 'minimal'
   const [showImageModal, setShowImageModal] = useState(null);
 
   const username = localStorage.getItem("username");
@@ -57,7 +57,7 @@ const RecipeDetails = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
-    navigate("/login");
+    navigate("/");
   };
 
   const goBack = () => {

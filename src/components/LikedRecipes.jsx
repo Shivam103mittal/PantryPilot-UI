@@ -52,7 +52,7 @@ const LikedRecipes = () => {
     if (userToken) {
       loadLikedRecipes();
     } else {
-      navigate("/login");
+      navigate("/");
     }
   }, [userToken, navigate]);
 

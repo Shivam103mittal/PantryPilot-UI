@@ -37,43 +37,43 @@ const RecipeMatcher = () => {
 
 
   const formatTime = (minutes) => {
-  if (minutes === 0) return '0 min';
-  if (minutes >= 60) {
-    const hours = Math.floor(minutes / 60);
-    const remainingMins = minutes % 60;
-    if (remainingMins === 0) {
-      return `${hours}h`;
+    if (minutes === 0) return '0 min';
+    if (minutes >= 60) {
+      const hours = Math.floor(minutes / 60);
+      const remainingMins = minutes % 60;
+      if (remainingMins === 0) {
+        return `${hours}h`;
+      }
+      return `${hours}h ${remainingMins}m`;
     }
-    return `${hours}h ${remainingMins}m`;
-  }
-  return `${minutes} min`;
-};
+    return `${minutes} min`;
+  };
 
-const getTimeCategory = (min, max) => {
-  if (max <= 15) return "Quick & Easy";
-  if (max <= 30) return "Fast Meals";
-  if (max <= 60) return "Standard Prep";
-  return "Elaborate Cooking";
-};
+  const getTimeCategory = (min, max) => {
+    if (max <= 15) return "Quick & Easy";
+    if (max <= 30) return "Fast Meals";
+    if (max <= 60) return "Standard Prep";
+    return "Elaborate Cooking";
+  };
 
   const navigate = useNavigate();
 
   // Restore scroll
-useEffect(() => {
-  window.scrollTo(0, matcherState.scrollY || 0);
-}, []);
+  useEffect(() => {
+    window.scrollTo(0, matcherState.scrollY || 0);
+  }, []);
 
-// Save state on unmount
-useEffect(() => {
-  return () => {
-    setMatcherState({
-      scrollY: window.scrollY,
-      ingredients,
-      recipes,
-      prepTimeRange,
-    });
-  };
-}, [ingredients, recipes, prepTimeRange, setMatcherState]);
+  // Save state on unmount
+  useEffect(() => {
+    return () => {
+      setMatcherState({
+        scrollY: window.scrollY,
+        ingredients,
+        recipes,
+        prepTimeRange,
+      });
+    };
+  }, [ingredients, recipes, prepTimeRange, setMatcherState]);
 
 
   const quickIngredients = [
@@ -105,7 +105,7 @@ useEffect(() => {
           Authorization: `Bearer ${userToken}`,
         },
       });
-      
+
       if (response.ok) {
         const likedRecipesData = await response.json();
         const likedIds = new Set(likedRecipesData.map(recipe => recipe.id));
@@ -181,6 +181,15 @@ useEffect(() => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
+    setIngredients([]);
+    setRecipes([]);
+    setPrepTimeRange([0, 120]);
+    setMatcherState({
+      scrollY: 0,
+      ingredients: [],
+      recipes: [],
+      prepTimeRange: [0, 120],
+    });
     navigate("/");
   };
 
@@ -245,77 +254,77 @@ useEffect(() => {
   const clearIngredients = () => setIngredients([]);
 
   const findRecipes = async () => {
-  if (ingredients.length<3) {
-    setMessage("Add at least three ingredients");
-    return;
-  }
-  setLoading(true);
-  setRecipes([]);
-  setToken(null);
-  setMessage("");
+    if (ingredients.length < 3) {
+      setMessage("Add at least three ingredients");
+      return;
+    }
+    setLoading(true);
+    setRecipes([]);
+    setToken(null);
+    setMessage("");
 
-  try {
-    const response = await fetch("/api/matching-recipes", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userToken}`,
-      },
-      body: JSON.stringify({
-        ingredients,
-        minPrepTime: prepTimeRange[0],
-        maxPrepTime: prepTimeRange[1],
-      }),
-    });
+    try {
+      const response = await fetch("/api/matching-recipes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+        body: JSON.stringify({
+          ingredients,
+          minPrepTime: prepTimeRange[0],
+          maxPrepTime: prepTimeRange[1],
+        }),
+      });
 
-    if (!response.ok) throw new Error("Error fetching recipes");
-    const data = await response.json();
-    setToken(data.token);
-    setRecipes(data.recipes || []);
-    if (!data.recipes?.length) setMessage("No recipes found");
-  } catch (err) {
-    console.error(err);
-    setMessage("Failed to fetch recipes");
-  } finally {
-    setLoading(false);
-  }
-};
+      if (!response.ok) throw new Error("Error fetching recipes");
+      const data = await response.json();
+      setToken(data.token);
+      setRecipes(data.recipes || []);
+      if (!data.recipes?.length) setMessage("No recipes found");
+    } catch (err) {
+      console.error(err);
+      setMessage("Failed to fetch recipes");
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   const loadMore = async () => {
-  if (!token) return;
-  setLoading(true);
-  try {
-    const response = await fetch(`/api/matching-recipes/${token}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${userToken}`,
-      },
-    });
-    if (!response.ok) throw new Error("Error fetching more recipes");
-    const data = await response.json();
+    if (!token) return;
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/matching-recipes/${token}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+      if (!response.ok) throw new Error("Error fetching more recipes");
+      const data = await response.json();
 
-    // Filter by prep time
-    const filteredRecipes = (data.recipes || []).filter(
-      (r) => r.prepTime >= prepTimeRange[0] && r.prepTime <= prepTimeRange[1]
-    );
+      // Filter by prep time
+      const filteredRecipes = (data.recipes || []).filter(
+        (r) => r.prepTime >= prepTimeRange[0] && r.prepTime <= prepTimeRange[1]
+      );
 
-    if (filteredRecipes.length === 0) {
-      setMessage("Can’t seem to find more for given ingredients");
-      setNoMoreRecipes(true);
-      return;
+      if (filteredRecipes.length === 0) {
+        setMessage("Can’t seem to find more for given ingredients");
+        setNoMoreRecipes(true);
+        return;
+      }
+
+      setRecipes((prev) => [...prev, ...filteredRecipes]);
+
+      // Show AI limit message if present
+    } catch (err) {
+      console.error(err);
+      setMessage("Failed to load more recipes");
+    } finally {
+      setLoading(false);
     }
-
-    setRecipes((prev) => [...prev, ...filteredRecipes]);
-
-    // Show AI limit message if present
-  } catch (err) {
-    console.error(err);
-    setMessage("Failed to load more recipes");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
 
 
@@ -370,7 +379,7 @@ useEffect(() => {
                     </span>
                   )}
                 </button>
-                
+
                 {/* Logout Button */}
                 <button
                   onClick={handleLogout}
@@ -513,130 +522,128 @@ useEffect(() => {
             </div>
 
             <div className="mb-6 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md rounded-3xl p-8 border border-white/20 shadow-xl transition-all duration-300 hover:shadow-2xl hover:border-white/30">
-  <div className="text-center mb-6">
-    <h3 className="text-white font-bold mb-2 text-xl tracking-wide">
-      ⏱️ Prep Time Filter
-    </h3>
-  </div>
+              <div className="text-center mb-6">
+                <h3 className="text-white font-bold mb-2 text-xl tracking-wide">
+                  ⏱️ Prep Time Filter
+                </h3>
+              </div>
 
-  <div className="space-y-6">
-    {/* Range Slider */}
-    <div className="px-4">
-      <Range
-        values={prepTimeRange}
-        step={5}
-        min={0}
-        max={120}
-        onChange={(values) => setPrepTimeRange(values)}
-        renderTrack={({ props, children }) => (
-          <div
-            {...props}
-            className="w-full h-3 rounded-full shadow-inner transition-all duration-200"
-            style={{
-              background: getTrackBackground({
-                values: prepTimeRange,
-                colors: ["#374151", "#8b5cf6", "#374151"],
-                min: 0,
-                max: 120,
-              }),
-            }}
-          >
-            {children}
-          </div>
-        )}
-        renderThumb={({ props, index, isDragged }) => (
-  <div
-    {...props}
-    className={`w-6 h-6 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full shadow-lg border-2 border-white/30 transition-all duration-200 cursor-pointer relative ${
-  isDragged ? 'shadow-xl' : ''
-}`}
+              <div className="space-y-6">
+                {/* Range Slider */}
+                <div className="px-4">
+                  <Range
+                    values={prepTimeRange}
+                    step={5}
+                    min={0}
+                    max={120}
+                    onChange={(values) => setPrepTimeRange(values)}
+                    renderTrack={({ props, children }) => (
+                      <div
+                        {...props}
+                        className="w-full h-3 rounded-full shadow-inner transition-all duration-200"
+                        style={{
+                          background: getTrackBackground({
+                            values: prepTimeRange,
+                            colors: ["#374151", "#8b5cf6", "#374151"],
+                            min: 0,
+                            max: 120,
+                          }),
+                        }}
+                      >
+                        {children}
+                      </div>
+                    )}
+                    renderThumb={({ props, index, isDragged }) => (
+                      <div
+                        {...props}
+                        className={`w-6 h-6 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full shadow-lg border-2 border-white/30 transition-all duration-200 cursor-pointer relative ${isDragged ? 'shadow-xl' : ''
+                          }`}
 
-  >
-    {/* Tooltip stays fixed relative to thumb, doesn't scale with it */}
-    <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 px-3 py-1 bg-gray-900/90 text-white text-xs rounded-lg shadow-lg">
-      {formatTime(prepTimeRange[index])}
-      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-2 border-r-2 border-t-4 border-transparent border-t-gray-900/90"></div>
-    </div>
-  </div>
-)}
+                      >
+                        {/* Tooltip stays fixed relative to thumb, doesn't scale with it */}
+                        <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 px-3 py-1 bg-gray-900/90 text-white text-xs rounded-lg shadow-lg">
+                          {formatTime(prepTimeRange[index])}
+                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-2 border-r-2 border-t-4 border-transparent border-t-gray-900/90"></div>
+                        </div>
+                      </div>
+                    )}
 
-      />
-    </div>
+                  />
+                </div>
 
-    {/* Time Display */}
-    <div className="flex items-center justify-between px-2">
-      <div className="text-center">
-        <div className="text-white/60 text-xs uppercase tracking-wider mb-1">
-          Minimum
-        </div>
-        <div className="text-white font-bold text-lg">
-          {formatTime(prepTimeRange[0])}
-        </div>
-      </div>
-      
-      <div className="flex-1 mx-4 text-center">
-        <div className="text-white/80 text-sm">
-          Recipes taking between{" "}
-          <span className="font-bold text-purple-300">
-            {formatTime(prepTimeRange[0])}
-          </span>{" "}
-          and{" "}
-          <span className="font-bold text-purple-300">
-            {formatTime(prepTimeRange[1])}
-          </span>
-        </div>
-      </div>
+                {/* Time Display */}
+                <div className="flex items-center justify-between px-2">
+                  <div className="text-center">
+                    <div className="text-white/60 text-xs uppercase tracking-wider mb-1">
+                      Minimum
+                    </div>
+                    <div className="text-white font-bold text-lg">
+                      {formatTime(prepTimeRange[0])}
+                    </div>
+                  </div>
 
-      <div className="text-center">
-        <div className="text-white/60 text-xs uppercase tracking-wider mb-1">
-          Maximum
-        </div>
-        <div className="text-white font-bold text-lg">
-          {formatTime(prepTimeRange[1])}
-        </div>
-      </div>
-    </div>
+                  <div className="flex-1 mx-4 text-center">
+                    <div className="text-white/80 text-sm">
+                      Recipes taking between{" "}
+                      <span className="font-bold text-purple-300">
+                        {formatTime(prepTimeRange[0])}
+                      </span>{" "}
+                      and{" "}
+                      <span className="font-bold text-purple-300">
+                        {formatTime(prepTimeRange[1])}
+                      </span>
+                    </div>
+                  </div>
 
-    {/* Quick Presets */}
-    <div className="border-t border-white/10 pt-4">
-      <div className="text-white/60 text-xs uppercase tracking-wider mb-3 text-center">
-        Quick Presets
-      </div>
-      <div className="flex flex-wrap justify-center gap-2">
-        {[
-  { label: "Under 15 min", range: [0, 15] },
-  { label: "15-30 min", range: [15, 30] },
-  { label: "30-60 min", range: [30, 60] },
-].map((preset) => (
-  <button
-    key={preset.label}
-    onClick={() => setPrepTimeRange(preset.range)}
-    className={`px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200 ${
-      prepTimeRange[0] === preset.range[0] && prepTimeRange[1] === preset.range[1]
-        ? 'bg-purple-500 text-white shadow-lg scale-105'
-        : 'bg-white/10 text-white/80 hover:bg-white/20 hover:scale-105'
-    }`}
-  >
-    {preset.label}
-  </button>
-))}
+                  <div className="text-center">
+                    <div className="text-white/60 text-xs uppercase tracking-wider mb-1">
+                      Maximum
+                    </div>
+                    <div className="text-white font-bold text-lg">
+                      {formatTime(prepTimeRange[1])}
+                    </div>
+                  </div>
+                </div>
 
-      </div>
-    </div>
+                {/* Quick Presets */}
+                <div className="border-t border-white/10 pt-4">
+                  <div className="text-white/60 text-xs uppercase tracking-wider mb-3 text-center">
+                    Quick Presets
+                  </div>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {[
+                      { label: "Under 15 min", range: [0, 15] },
+                      { label: "15-30 min", range: [15, 30] },
+                      { label: "30-60 min", range: [30, 60] },
+                    ].map((preset) => (
+                      <button
+                        key={preset.label}
+                        onClick={() => setPrepTimeRange(preset.range)}
+                        className={`px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200 ${prepTimeRange[0] === preset.range[0] && prepTimeRange[1] === preset.range[1]
+                            ? 'bg-purple-500 text-white shadow-lg scale-105'
+                            : 'bg-white/10 text-white/80 hover:bg-white/20 hover:scale-105'
+                          }`}
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
 
-    {/* Reset Button */}
-    {(prepTimeRange[0] !== 0 || prepTimeRange[1] !== 60) && (
-      <div className="text-center">
-        <button
-          onClick={() => setPrepTimeRange([0, 120])}
-          className="text-white/60 hover:text-white text-xs underline transition-colors duration-200"
-        >
-          Reset to default range
-        </button>
-      </div>
-    )}
-  </div>
-</div>
+                  </div>
+                </div>
+
+                {/* Reset Button */}
+                {(prepTimeRange[0] !== 0 || prepTimeRange[1] !== 60) && (
+                  <div className="text-center">
+                    <button
+                      onClick={() => setPrepTimeRange([0, 120])}
+                      className="text-white/60 hover:text-white text-xs underline transition-colors duration-200"
+                    >
+                      Reset to default range
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
 
 
             {/* Find Recipes Button */}
@@ -678,17 +685,17 @@ useEffect(() => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {recipes.map((recipe, idx) => (
                     <div
-  key={recipe.id || idx}
-  className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 rounded-2xl hover:bg-white/15 transform hover:scale-105 transition-all duration-500 ease-in-out group animate-fadeIn fade-transition relative cursor-pointer"
-  style={{ animationDelay: `${idx * 0.1}s` }}
-  onClick={() => navigate(`/recipes/${recipe.id}`)} // 👈 navigate on card click
->
-  {/* Like/Unlike Button */}
-  <button
-    onClick={(e) => {
-      e.stopPropagation(); // 👈 prevent navigation when liking
-      toggleLike(recipe.id);
-    }}
+                      key={recipe.id || idx}
+                      className="bg-white/10 backdrop-blur-sm border border-white/20 p-6 rounded-2xl hover:bg-white/15 transform hover:scale-105 transition-all duration-500 ease-in-out group animate-fadeIn fade-transition relative cursor-pointer"
+                      style={{ animationDelay: `${idx * 0.1}s` }}
+                      onClick={() => navigate(`/recipes/${recipe.id}`)} // 👈 navigate on card click
+                    >
+                      {/* Like/Unlike Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation(); // 👈 prevent navigation when liking
+                          toggleLike(recipe.id);
+                        }}
 
                         className="absolute top-4 right-4 p-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-110"
                         title={likedRecipes.has(recipe.id) ? "Unlike recipe" : "Like recipe"}

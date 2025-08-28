@@ -31,7 +31,7 @@ const RecipeDetails = () => {
 
   useEffect(() => {
     if (!userToken) {
-      navigate("/login");
+      navigate("/");
       return;
     }
     fetchRecipe();

@@ -33,7 +33,7 @@ const Login = () => {
                 localStorage.setItem("token", data.token);
                 localStorage.setItem("username", data.username);
                 setError("");
-                navigate("/"); // redirect to RecipeMatcher page
+                navigate("/recipe-matcher"); // redirect to RecipeMatcher page
             } else {
                 setError(data.error || "Login failed");
             }

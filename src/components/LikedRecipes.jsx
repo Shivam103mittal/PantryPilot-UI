@@ -39,14 +39,14 @@ const LikedRecipes = () => {
 
   // Save state before unmount
   useEffect(() => {
-  return () => {
-    setLikedState({
-      scrollY: window.scrollY,
-      search: searchTerm,
-      filter: sortBy, // treat sortBy as "filter" since that's what you're using
-    });
-  };
-}, [searchTerm, sortBy, setLikedState]);
+    return () => {
+      setLikedState({
+        scrollY: window.scrollY,
+        search: searchTerm,
+        filter: sortBy, // treat sortBy as "filter" since that's what you're using
+      });
+    };
+  }, [searchTerm, sortBy, setLikedState]);
 
   useEffect(() => {
     if (userToken) {
@@ -63,9 +63,9 @@ const LikedRecipes = () => {
   const loadLikedRecipes = async () => {
     setLoading(true);
     setError(""); // Clear previous errors
-    
+
     console.log("Loading liked recipes..."); // Debug log
-    
+
     try {
       const response = await fetch("/api/likes", {
         headers: {
@@ -129,7 +129,7 @@ const LikedRecipes = () => {
 
   const formatPrepTime = (minutes) => {
     if (!minutes || minutes === 0) return "N/A";
-    
+
     if (minutes < 60) {
       return `${minutes} min`;
     } else {
@@ -191,7 +191,7 @@ const LikedRecipes = () => {
   };
 
   const goBackToMatcher = () => {
-    navigate("/"); // Navigate to home route which is RecipeMatcher
+    navigate("/recipe-matcher"); // Navigate to home route which is RecipeMatcher
   };
 
   if (loading) {
@@ -320,8 +320,8 @@ const LikedRecipes = () => {
                   {likedRecipes.length === 0 ? "No Favorite Recipes Yet" : "No Recipes Found"}
                 </h3>
                 <p className="text-white/70 text-lg mb-6">
-                  {likedRecipes.length === 0 
-                    ? "Start exploring recipes and save your favorites!" 
+                  {likedRecipes.length === 0
+                    ? "Start exploring recipes and save your favorites!"
                     : "Try adjusting your search or filters"}
                 </p>
                 <button
@@ -369,8 +369,8 @@ const LikedRecipes = () => {
                       {/* Recipe Instructions Preview */}
                       {recipe.instructions && (
                         <p className="text-white/70 text-sm mb-4 line-clamp-3">
-                          {recipe.instructions.length > 150 
-                            ? `${recipe.instructions.substring(0, 150)}...` 
+                          {recipe.instructions.length > 150
+                            ? `${recipe.instructions.substring(0, 150)}...`
                             : recipe.instructions}
                         </p>
                       )}

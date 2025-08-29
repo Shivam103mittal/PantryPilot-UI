@@ -100,7 +100,7 @@ const RecipeMatcher = () => {
   // Function to load liked recipes from backend
   const loadLikedRecipes = async () => {
     try {
-      const response = await fetch("/api/likes", {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/likes`, {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
@@ -120,7 +120,7 @@ const RecipeMatcher = () => {
   // Function to like a recipe
   const likeRecipe = async (recipeId) => {
     try {
-      const response = await fetch(`/api/likes/${recipeId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/likes/${recipeId}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${userToken}`,
@@ -141,7 +141,7 @@ const RecipeMatcher = () => {
   // Function to unlike a recipe
   const unlikeRecipe = async (recipeId) => {
     try {
-      const response = await fetch(`/api/likes/${recipeId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/likes/${recipeId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${userToken}`,
@@ -264,7 +264,7 @@ const RecipeMatcher = () => {
     setMessage("");
 
     try {
-      const response = await fetch("/api/matching-recipes", {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/matching-recipes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -295,7 +295,7 @@ const RecipeMatcher = () => {
     if (!token) return;
     setLoading(true);
     try {
-      const response = await fetch(`/api/matching-recipes/${token}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/matching-recipes/${token}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${userToken}`,

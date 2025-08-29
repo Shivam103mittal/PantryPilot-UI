@@ -67,7 +67,7 @@ const LikedRecipes = () => {
     console.log("Loading liked recipes..."); // Debug log
 
     try {
-      const response = await fetch("/api/likes", {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/likes`, {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
@@ -157,7 +157,7 @@ const LikedRecipes = () => {
     if (!recipeToDelete) return;
 
     try {
-      const response = await fetch(`/api/likes/${recipeToDelete.id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/likes/${recipeToDelete.id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${userToken}`,

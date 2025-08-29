@@ -5,7 +5,6 @@ import logo from "../assets/logo.png";
 const Homepage = () => {
     const [currentIngredient, setCurrentIngredient] = useState(0);
     const [isVisible, setIsVisible] = useState({});
-    const navigate = useNavigate();
 
     const ingredients = [
         { emoji: "🥕", name: "Carrots", amount: "3 pcs" },
@@ -55,11 +54,11 @@ const Homepage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 overflow-hidden">
-            {/* Animated background */}
-            <div className="fixed inset-0 overflow-hidden">
-                <div className="absolute top-10 left-10 w-96 h-96 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-                <div className="absolute top-40 right-20 w-96 h-96 bg-yellow-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
-                <div className="absolute bottom-20 left-40 w-96 h-96 bg-pink-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{ animationDelay: '4s' }}></div>
+            {/* Fixed animated background for iOS */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-10 left-10 w-72 h-72 sm:w-96 sm:h-96 bg-purple-400 rounded-full opacity-20 animate-pulse" style={{ filter: 'blur(40px)', mixBlendMode: 'multiply' }}></div>
+                <div className="absolute top-40 right-20 w-72 h-72 sm:w-96 sm:h-96 bg-yellow-400 rounded-full opacity-20 animate-pulse" style={{ filter: 'blur(40px)', mixBlendMode: 'multiply', animationDelay: '2s' }}></div>
+                <div className="absolute bottom-20 left-40 w-72 h-72 sm:w-96 sm:h-96 bg-pink-400 rounded-full opacity-20 animate-pulse" style={{ filter: 'blur(40px)', mixBlendMode: 'multiply', animationDelay: '4s' }}></div>
             </div>
 
             {/* Navigation */}
@@ -67,13 +66,14 @@ const Homepage = () => {
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                         <img src={logo} alt="PantryPilot Logo" className="w-12 h-12 rounded-xl shadow-lg" />
-                        <span className="text-2xl font-bold text-white">Pantry Pilot</span>
+                        <span className="text-2xl font-bold text-white" style={{ color: '#ffffff' }}>Pantry Pilot</span>
                     </div>
 
                     <div className="flex items-center space-x-4">
                         <button
                             onClick={handleLogin}
-                            className="text-white/80 hover:text-white transition-colors font-medium"
+                            className="font-medium transition-colors"
+                            style={{ color: 'rgba(255, 255, 255, 0.8)' }}
                         >
                             Login
                         </button>
@@ -99,12 +99,14 @@ const Homepage = () => {
                             />
                         </div>
 
-                        <h1 className="text-6xl md:text-7xl font-bold text-white mb-6 leading-tight">
-                            Transform Your
-                            <span className="bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent"> Ingredients</span>
-                            <br />Into Magic
+                        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+                            <span style={{ color: '#ffffff' }}>Transform Your</span>
+                            <br />
+                            <span className="bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent">Ingredients</span>
+                            <br />
+                            <span style={{ color: '#ffffff' }}>Into Magic</span>
                         </h1>
-                        <p className="text-xl md:text-2xl text-white/80 max-w-3xl mx-auto mb-12 leading-relaxed">
+                        <p className="text-lg sm:text-xl md:text-2xl max-w-3xl mx-auto mb-12 leading-relaxed" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
                             AI-powered recipe discovery that turns what's in your pantry into delicious meals.
                             No more wondering "what can I make with this?"
                         </p>
@@ -117,29 +119,36 @@ const Homepage = () => {
                                 Start Cooking Smart 🚀
                             </button>
                         </div>
-
                     </div>
 
                     {/* Interactive Demo */}
                     <div className="max-w-4xl mx-auto">
-                        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20 shadow-2xl">
+                        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 sm:p-8 border border-white/20 shadow-2xl">
                             <div className="grid md:grid-cols-3 gap-8 items-center">
                                 {/* Input Side */}
                                 <div className="space-y-6">
-                                    <h3 className="text-2xl font-bold text-white mb-4">Add Your Ingredients</h3>
+                                    <h3 className="text-xl sm:text-2xl font-bold mb-4" style={{ color: '#ffffff' }}>Add Your Ingredients</h3>
                                     <div className="space-y-3">
                                         {ingredients.map((ingredient, index) => (
                                             <div
                                                 key={index}
                                                 className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-500 ${index === currentIngredient
-                                                    ? 'bg-gradient-to-r from-orange-500/30 to-red-500/30 border border-orange-400/50 scale-105'
-                                                    : 'bg-white/5 border border-white/10'
+                                                    ? 'border scale-105'
+                                                    : 'border'
                                                     }`}
+                                                style={{
+                                                    backgroundColor: index === currentIngredient 
+                                                        ? 'rgba(249, 115, 22, 0.3)' 
+                                                        : 'rgba(255, 255, 255, 0.05)',
+                                                    borderColor: index === currentIngredient 
+                                                        ? 'rgba(249, 115, 22, 0.5)' 
+                                                        : 'rgba(255, 255, 255, 0.1)'
+                                                }}
                                             >
                                                 <span className="text-2xl">{ingredient.emoji}</span>
                                                 <div className="text-left">
-                                                    <div className="text-white font-medium">{ingredient.name}</div>
-                                                    <div className="text-white/60 text-sm">{ingredient.amount}</div>
+                                                    <div className="font-medium" style={{ color: '#ffffff' }}>{ingredient.name}</div>
+                                                    <div className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>{ingredient.amount}</div>
                                                 </div>
                                             </div>
                                         ))}
@@ -157,12 +166,19 @@ const Homepage = () => {
 
                                 {/* Output Side */}
                                 <div className="space-y-4">
-                                    <h3 className="text-2xl font-bold text-white mb-4">Get Perfect Recipes</h3>
+                                    <h3 className="text-xl sm:text-2xl font-bold mb-4" style={{ color: '#ffffff' }}>Get Perfect Recipes</h3>
                                     <div className="space-y-3">
                                         {recipes.map((recipe, index) => (
-                                            <div key={index} className="bg-gradient-to-r from-green-500/20 to-blue-500/20 border border-green-400/30 p-4 rounded-xl">
-                                                <div className="text-white font-semibold mb-1">{recipe.name}</div>
-                                                <div className="flex gap-4 text-sm text-white/70">
+                                            <div 
+                                                key={index} 
+                                                className="p-4 rounded-xl border"
+                                                style={{
+                                                    backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                                                    borderColor: 'rgba(34, 197, 94, 0.3)'
+                                                }}
+                                            >
+                                                <div className="font-semibold mb-1" style={{ color: '#ffffff' }}>{recipe.name}</div>
+                                                <div className="flex gap-4 text-sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                                                     <span>⏱️ {recipe.time}</span>
                                                     <span>👨‍🍳 {recipe.difficulty}</span>
                                                 </div>
@@ -180,8 +196,8 @@ const Homepage = () => {
             <section id="section-features" className="relative z-10 pt-12 py-24">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="text-center mb-16">
-                        <h2 className="text-5xl font-bold text-white mb-6">Why Pantry Pilot?</h2>
-                        <p className="text-xl text-white/70 max-w-2xl mx-auto">
+                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6" style={{ color: '#ffffff' }}>Why Pantry Pilot?</h2>
+                        <p className="text-lg sm:text-xl max-w-2xl mx-auto" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                             Smart cooking starts with understanding what you have
                         </p>
                     </div>
@@ -221,13 +237,18 @@ const Homepage = () => {
                         ].map((feature, index) => (
                             <div
                                 key={index}
-                                className={`bg-white/10 backdrop-blur-lg p-8 rounded-2xl border border-white/20 hover:bg-white/20 transition-all duration-500 transform ${isVisible['section-features'] ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+                                className={`p-8 rounded-2xl border hover:bg-white/20 transition-all duration-500 transform ${isVisible['section-features'] ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
                                     }`}
-                                style={{ transitionDelay: `${index * 100}ms` }}
+                                style={{ 
+                                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                                    backdropFilter: 'blur(16px)',
+                                    transitionDelay: `${index * 100}ms`
+                                }}
                             >
                                 <div className="text-4xl mb-4">{feature.icon}</div>
-                                <h3 className="text-2xl font-bold text-white mb-4">{feature.title}</h3>
-                                <p className="text-white/70 leading-relaxed">{feature.description}</p>
+                                <h3 className="text-2xl font-bold mb-4" style={{ color: '#ffffff' }}>{feature.title}</h3>
+                                <p className="leading-relaxed" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>{feature.description}</p>
                             </div>
                         ))}
                     </div>
@@ -238,8 +259,8 @@ const Homepage = () => {
             <section id="section-how" className="relative z-10 py-24">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="text-center mb-16">
-                        <h2 className="text-5xl font-bold text-white mb-6">How It Works</h2>
-                        <p className="text-xl text-white/70">Three simple steps to culinary magic</p>
+                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6" style={{ color: '#ffffff' }}>How It Works</h2>
+                        <p className="text-lg sm:text-xl" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Three simple steps to culinary magic</p>
                     </div>
 
                     <div className="grid md:grid-cols-3 gap-8">
@@ -272,9 +293,9 @@ const Homepage = () => {
                                 <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6 shadow-lg">
                                     {step.icon}
                                 </div>
-                                <div className="text-6xl font-bold text-white/20 mb-2">{step.step}</div>
-                                <h3 className="text-2xl font-bold text-white mb-4">{step.title}</h3>
-                                <p className="text-white/70 max-w-sm mx-auto leading-relaxed">{step.description}</p>
+                                <div className="text-6xl font-bold mb-2" style={{ color: 'rgba(255, 255, 255, 0.2)' }}>{step.step}</div>
+                                <h3 className="text-2xl font-bold mb-4" style={{ color: '#ffffff' }}>{step.title}</h3>
+                                <p className="max-w-sm mx-auto leading-relaxed" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>{step.description}</p>
                             </div>
                         ))}
                     </div>
@@ -284,9 +305,16 @@ const Homepage = () => {
             {/* CTA Section */}
             <section id="section-cta" className="relative z-10 py-24">
                 <div className="max-w-4xl mx-auto px-6 text-center">
-                    <div className="bg-gradient-to-r from-orange-500/20 to-red-500/20 backdrop-blur-lg p-12 rounded-3xl border border-orange-400/30">
-                        <h2 className="text-5xl font-bold text-white mb-6">Ready to Transform Your Cooking?</h2>
-                        <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
+                    <div 
+                        className="p-8 sm:p-12 rounded-3xl border"
+                        style={{
+                            backgroundColor: 'rgba(249, 115, 22, 0.2)',
+                            borderColor: 'rgba(249, 115, 22, 0.3)',
+                            backdropFilter: 'blur(16px)'
+                        }}
+                    >
+                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6" style={{ color: '#ffffff' }}>Ready to Transform Your Cooking?</h2>
+                        <p className="text-lg sm:text-xl mb-8 max-w-2xl mx-auto" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
                             Join thousands of home cooks who've discovered the joy of cooking with what they have
                         </p>
 
@@ -299,13 +327,18 @@ const Homepage = () => {
                             </button>
                             <button
                                 onClick={handleLogin}
-                                className="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/20 transition-all"
+                                className="border text-white px-8 py-4 rounded-xl font-semibold transition-all"
+                                style={{
+                                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                                    backdropFilter: 'blur(8px)'
+                                }}
                             >
                                 Already have an account?
                             </button>
                         </div>
 
-                        <div className="mt-8 text-white/60 text-sm">
+                        <div className="mt-8 text-sm" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
                             Free to start • No credit card required • Join in 30 seconds
                         </div>
                     </div>
@@ -313,13 +346,13 @@ const Homepage = () => {
             </section>
 
             {/* Footer */}
-            <footer className="relative z-10 py-12 border-t border-white/10">
+            <footer className="relative z-10 py-12 border-t" style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                 <div className="max-w-7xl mx-auto px-6 text-center">
                     <div className="flex items-center justify-center space-x-3 mb-4">
                         <img src={logo} alt="PantryPilot Logo" className="w-12 h-12 rounded-xl shadow-lg" />
-                        <span className="text-lg font-bold text-white">Pantry Pilot</span>
+                        <span className="text-lg font-bold" style={{ color: '#ffffff' }}>Pantry Pilot</span>
                     </div>
-                    <p className="text-white/60">Made with ❤️ for home cooks everywhere</p>
+                    <p style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Made with ❤️ for home cooks everywhere</p>
                 </div>
             </footer>
         </div>

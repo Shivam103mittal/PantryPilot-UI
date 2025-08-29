@@ -2,8 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-
-/* Optional global styles using @apply */
+/* Custom styles AFTER utilities */
 body {
   @apply bg-gray-50 text-gray-900;
   font-family: 'Inter', sans-serif;

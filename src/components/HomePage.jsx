@@ -6,6 +6,8 @@ const Homepage = () => {
     const [currentIngredient, setCurrentIngredient] = useState(0);
     const [isVisible, setIsVisible] = useState({});
 
+    const navigate = useNavigate();
+
     const ingredients = [
         { emoji: "🥕", name: "Carrots", amount: "3 pcs" },
         { emoji: "🍅", name: "Tomatoes", amount: "2 pcs" },

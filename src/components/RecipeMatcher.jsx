@@ -78,13 +78,12 @@ const RecipeMatcher = () => {
 
   const quickIngredients = [
     "chicken",
-    "rice",
+    "carrot",
     "tomato",
     "onion",
-    "garlic",
     "egg",
-    "cheese",
-    "pasta",
+    "lemon",
+    "potato",
   ];
 
   const userToken = localStorage.getItem("token");
